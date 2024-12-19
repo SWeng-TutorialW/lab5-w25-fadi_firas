@@ -1,9 +1,10 @@
 package il.cshaifasweng.OCSFMediatorExample.client;
 
+import il.cshaifasweng.OCSFMediatorExample.entities.BoardMessage;
+import il.cshaifasweng.OCSFMediatorExample.entities.GameEndMessage;
 import org.greenrobot.eventbus.EventBus;
 
 import il.cshaifasweng.OCSFMediatorExample.client.ocsf.AbstractClient;
-import il.cshaifasweng.OCSFMediatorExample.entities.Warning;
 
 public class SimpleClient extends AbstractClient {
 	
@@ -15,11 +16,15 @@ public class SimpleClient extends AbstractClient {
 
 	@Override
 	protected void handleMessageFromServer(Object msg) {
-		if (msg.getClass().equals(Warning.class)) {
-			EventBus.getDefault().post(new WarningEvent((Warning) msg));
-		}
-		else{
+		if (msg instanceof BoardMessage) {
+			EventBus.getDefault().post(msg);
+		} else if (msg instanceof GameEndMessage) {
+			EventBus.getDefault().post(msg);
+		} else {
 			String message = msg.toString();
+			if (message.equals("client added successfully")) {
+				EventBus.getDefault().post(new ConnectedEvent());
+			}
 			System.out.println(message);
 		}
 	}
